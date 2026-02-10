@@ -115,6 +115,18 @@ static void UpdateProgressWrapper(uint64_t fsize, uint64_t totalSize, bool isSiz
 	}
 }
 
+static inline void WaitIfPaused(ThreadData *thrdData)
+{
+	while (thrdData->pause && !thrdData->stop)
+	{
+#if defined (_WIN32)
+		Sleep(100);
+#else
+		usleep(100000); // 100ms
+#endif
+	}
+}
+
 // working thread
 int WINAPI HashThreadFunc(void *param)
 {
@@ -151,6 +163,7 @@ int WINAPI HashThreadFunc(void *param)
 		isSizeCaled = true;
 		for (i = 0; i < (thrdData->nFiles); i++)
 		{
+			WaitIfPaused(thrdData);
 			if (thrdData->stop)
 			{
 				thrdData->threadWorking = false;
@@ -179,6 +192,7 @@ int WINAPI HashThreadFunc(void *param)
 	// loop all files
 	for (i = 0; i < (thrdData->nFiles); i++)
 	{
+		WaitIfPaused(thrdData);
 		if (thrdData->stop)
 		{
 			thrdData->threadWorking = false;
@@ -352,6 +366,7 @@ int WINAPI HashThreadFunc(void *param)
 
 			do
 			{
+				WaitIfPaused(thrdData);
 				if (thrdData->stop)
 					break;
 

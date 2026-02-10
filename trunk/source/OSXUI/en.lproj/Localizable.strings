@@ -18,7 +18,7 @@
 "BUTTON_CANCEL" = "Cancel";
 
 // Main Dialog Strings
-"MAINDLG_INITINFO" = "Drag files here or click open to start calculate...";
+"MAINDLG_INITINFO" = "Drag files or folders here or click open to start calculate...";
 "MAINDLG_WAITING_START" = "Prepare to start calculation.";
 "MAINDLG_CONTEXT_INIT" = "Need Administrator";
 "MAINDLG_ADD_SUCCEEDED" = "Add Succeeded";
@@ -39,6 +39,8 @@
 "MAINDLG_TIME_TITLE" = "Time Used:";
 "MAINDLG_OPEN" = "&Open...";
 "MAINDLG_STOP" = "&Stop";
+"MAINDLG_PAUSE" = "&Pause";
+"MAINDLG_RESUME" = "Resu&me";
 "MAINDLG_COPY" = "&Copy";
 "MAINDLG_VERIFY" = "&Verify";
 "MAINDLG_ABOUT" = "&About";
@@ -61,6 +63,11 @@
 "ABOUTDLG_INFO_OSTITLE" = "Operating System:";
 "ABOUTDLG_PROJECT_SITE" = "<a>GitHub</a>";
 "ABOUTDLG_PROJECT_URL" = "https://github.com/sunjw/fhash";
+
+// Folder strings
+"FOLDER_CONTAINS_SUBFOLDERS" = "The selected folder contains subfolders.";
+"FOLDER_RECURSIVE" = "All files (recursive)";
+"FOLDER_TOP_LEVEL" = "Top level only";
 
 // Shell ext
 "SHELL_EXT_TOO_MANY_FILES" = "Selected too many files";

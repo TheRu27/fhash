@@ -1,6 +1,11 @@
-26.2.38 (143) 2026-02-09  
-Windows WinUI: update components  
-Fix other issues  
+0.1.0 2026-02-10 (fork, based on upstream 26.2.38)
+macOS: add folder support (select or drag & drop folders, recursive/top-level option)
+macOS: add pause/resume for hash calculation
+macOS: remove minimum window size constraint
+
+26.2.38 (143) 2026-02-09
+Windows WinUI: update components
+Fix other issues
 
 26.1.37 (142) 2026-01-06  
 Windows WinUI: upgrade to .NET 10  

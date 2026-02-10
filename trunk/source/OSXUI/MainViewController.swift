@@ -18,7 +18,8 @@ private struct MainViewControllerState: OptionSet {
     static let CALC_ING = MainViewControllerState(rawValue: 1 << 1) // calculating
     static let CALC_FINISH = MainViewControllerState(rawValue: 1 << 2) // calculating finished/stopped
     static let VERIFY = MainViewControllerState(rawValue: 1 << 3) // verfing
-    static let WAITING_EXIT = MainViewControllerState(rawValue: 1 << 4) // waiting thread stop and exit
+    static let CALC_PAUSED = MainViewControllerState(rawValue: 1 << 4) // calculating paused
+    static let WAITING_EXIT = MainViewControllerState(rawValue: 1 << 5) // waiting thread stop and exit
 }
 
 @objc(MainViewController) class MainViewController: NSViewController, NSTextViewDelegate {
@@ -240,21 +241,33 @@ private struct MainViewControllerState: OptionSet {
             verifyButton.isEnabled = true
             upperCaseButton.isEnabled = true
         case .CALC_ING:
-            calcStartTime = MacSwiftUtils.GetCurrentMilliSec()
-
             hashBridge?.setStop(false)
+            hashBridge?.setPause(false)
 
-            let openMenuItem = self.getOpenMenuItem()
-            openMenuItem?.isEnabled = false
+            if state != .CALC_PAUSED {
+                // Fresh calculation, not resuming from pause.
+                calcStartTime = MacSwiftUtils.GetCurrentMilliSec()
 
-            speedTextField.stringValue = ""
+                let openMenuItem = self.getOpenMenuItem()
+                openMenuItem?.isEnabled = false
+
+                speedTextField.stringValue = ""
+
+                verifyButton.isEnabled = false
+                upperCaseButton.isEnabled = false
+
+                self.bringWindowToFront()
+            }
 
             openButton.title = MacSwiftUtils.GetStringFromRes("MAINDLG_STOP")
-            clearButton.isEnabled = false
-            verifyButton.isEnabled = false
-            upperCaseButton.isEnabled = false
+            clearButton.title = MacSwiftUtils.GetStringFromRes("MAINDLG_PAUSE")
+            clearButton.isEnabled = true
+        case .CALC_PAUSED:
+            hashBridge?.setPause(true)
 
-            self.bringWindowToFront()
+            openButton.title = MacSwiftUtils.GetStringFromRes("MAINDLG_STOP")
+            clearButton.title = MacSwiftUtils.GetStringFromRes("MAINDLG_RESUME")
+            clearButton.isEnabled = true
         // case .VERIFY:
         // case .WAITING_EXIT:
         default:
@@ -288,30 +301,132 @@ private struct MainViewControllerState: OptionSet {
     }
 
     func isCalculating() -> Bool {
-        return (state == .CALC_ING || state == .WAITING_EXIT)
+        return (state == .CALC_ING || state == .CALC_PAUSED || state == .WAITING_EXIT)
     }
 
     func openFiles() {
         let openPanel = NSOpenPanel()
         openPanel.showsResizeIndicator = true
         openPanel.showsHiddenFiles = false
-        openPanel.canChooseDirectories = false
+        openPanel.canChooseDirectories = true
         openPanel.canCreateDirectories = true
         openPanel.allowsMultipleSelection = true
 
         openPanel.beginSheetModal(for: view.window!) { result in
             if result == .OK {
                 let fileNames = openPanel.urls
-                self.startHashCalc(fileNames, isURL: true)
+                self.resolveURLs(fileNames) { resolvedURLs in
+                    if !resolvedURLs.isEmpty {
+                        self.startHashCalc(resolvedURLs, isURL: true)
+                    }
+                }
             }
         }
     }
 
     func performViewDragOperation(_ sender: NSDraggingInfo?) {
         if let pboard = sender?.draggingPasteboard {
-            let fileNames = pboard.readObjects(forClasses: [NSURL.self], options: [:])
-            self.startHashCalc(fileNames ?? [], isURL: true)
+            let fileNames = pboard.readObjects(forClasses: [NSURL.self], options: [:]) as? [URL] ?? []
+            self.resolveURLs(fileNames) { resolvedURLs in
+                if !resolvedURLs.isEmpty {
+                    self.startHashCalc(resolvedURLs, isURL: true)
+                }
+            }
         }
+    }
+
+    func resolveURLs(_ urls: [URL], completion: @escaping ([URL]) -> Void) {
+        let fm = FileManager.default
+        var fileURLs: [URL] = []
+        var dirURLs: [URL] = []
+
+        for url in urls {
+            var isDir: ObjCBool = false
+            if fm.fileExists(atPath: url.path, isDirectory: &isDir), isDir.boolValue {
+                dirURLs.append(url)
+            } else {
+                fileURLs.append(url)
+            }
+        }
+
+        if dirURLs.isEmpty {
+            completion(fileURLs)
+            return
+        }
+
+        // Check if any directory contains subfolders.
+        var hasSubfolders = false
+        for dirURL in dirURLs {
+            if let contents = try? fm.contentsOfDirectory(
+                at: dirURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) {
+                for item in contents {
+                    var itemIsDir: ObjCBool = false
+                    if fm.fileExists(atPath: item.path, isDirectory: &itemIsDir), itemIsDir.boolValue {
+                        hasSubfolders = true
+                        break
+                    }
+                }
+            }
+            if hasSubfolders { break }
+        }
+
+        if !hasSubfolders {
+            // No subfolders — enumerate top-level files only.
+            for dirURL in dirURLs {
+                if let contents = try? fm.contentsOfDirectory(
+                    at: dirURL, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles]) {
+                    for item in contents {
+                        var itemIsDir: ObjCBool = false
+                        if fm.fileExists(atPath: item.path, isDirectory: &itemIsDir), !itemIsDir.boolValue {
+                            fileURLs.append(item)
+                        }
+                    }
+                }
+            }
+            completion(fileURLs)
+            return
+        }
+
+        // Has subfolders — ask user.
+        let alert = NSAlert()
+        alert.messageText = MacSwiftUtils.GetStringFromRes("FOLDER_CONTAINS_SUBFOLDERS")
+        alert.addButton(withTitle: MacSwiftUtils.GetStringFromRes("FOLDER_RECURSIVE"))
+        alert.addButton(withTitle: MacSwiftUtils.GetStringFromRes("FOLDER_TOP_LEVEL"))
+        alert.alertStyle = .informational
+
+        alert.beginSheetModal(for: self.view.window!) { response in
+            let recursive = (response == .alertFirstButtonReturn)
+            for dirURL in dirURLs {
+                if recursive {
+                    if let enumerator = fm.enumerator(
+                        at: dirURL, includingPropertiesForKeys: [.isRegularFileKey],
+                        options: [.skipsHiddenFiles]) {
+                        for case let item as URL in enumerator {
+                            var itemIsDir: ObjCBool = false
+                            if fm.fileExists(atPath: item.path, isDirectory: &itemIsDir), !itemIsDir.boolValue {
+                                fileURLs.append(item)
+                            }
+                        }
+                    }
+                } else {
+                    if let contents = try? fm.contentsOfDirectory(
+                        at: dirURL, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles]) {
+                        for item in contents {
+                            var itemIsDir: ObjCBool = false
+                            if fm.fileExists(atPath: item.path, isDirectory: &itemIsDir), !itemIsDir.boolValue {
+                                fileURLs.append(item)
+                            }
+                        }
+                    }
+                }
+            }
+            completion(fileURLs)
+        }
+    }
+
+    func resolvePaths(_ paths: [String], completion: @escaping ([URL]) -> Void) {
+        let urls = paths.map { URL(fileURLWithPath: $0) }
+        resolveURLs(urls, completion: completion)
     }
 
     private func updateUpperCaseState() {
@@ -552,7 +667,8 @@ private struct MainViewControllerState: OptionSet {
     }
 
     func stopHashCalc(_ needExit: Bool) {
-        if state == .CALC_ING {
+        if state == .CALC_ING || state == .CALC_PAUSED {
+            hashBridge?.setPause(false)
             hashBridge?.setStop(true)
 
             if needExit {
@@ -806,7 +922,7 @@ private struct MainViewControllerState: OptionSet {
     }
 
     @IBAction func openButtonClicked(_ sender: NSButton) {
-        if state == .CALC_ING {
+        if state == .CALC_ING || state == .CALC_PAUSED {
             self.stopHashCalc(false)
         } else {
             self.openFiles()
@@ -814,7 +930,12 @@ private struct MainViewControllerState: OptionSet {
     }
 
     @IBAction func clearButtonClicked(_ sender: NSButton) {
-        if state == .VERIFY {
+        if state == .CALC_ING {
+            self.setViewControllerState(.CALC_PAUSED)
+        } else if state == .CALC_PAUSED {
+            self.setViewControllerState(.CALC_ING)
+        } else if state == .VERIFY {
+            // Do nothing.
         } else {
             self.setViewControllerState(.NONE)
             self.updateMainTextView()

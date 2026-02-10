@@ -37,7 +37,11 @@ import Cocoa
     }
 
     func application(_ sender: NSApplication, openFiles filenames: [String]) {
-        mainViewController?.startHashCalc(filenames, isURL: false)
+        mainViewController?.resolvePaths(filenames) { resolvedURLs in
+            if !resolvedURLs.isEmpty {
+                self.mainViewController?.startHashCalc(resolvedURLs, isURL: true)
+            }
+        }
 
         sender.reply(toOpenOrPrint: .success)
     }
@@ -45,8 +49,12 @@ import Cocoa
     @MainActor @objc func handleFinderContextOpen(_ pboard: NSPasteboard,
                                        userData: String,
                                        error: NSErrorPointer){
-        if let fileNames = pboard.readObjects(forClasses: [NSURL.self], options: [:]) {
-            mainViewController?.startHashCalc(fileNames, isURL: true)
+        if let fileNames = pboard.readObjects(forClasses: [NSURL.self], options: [:]) as? [URL] {
+            mainViewController?.resolveURLs(fileNames) { resolvedURLs in
+                if !resolvedURLs.isEmpty {
+                    self.mainViewController?.startHashCalc(resolvedURLs, isURL: true)
+                }
+            }
         }
     }
 

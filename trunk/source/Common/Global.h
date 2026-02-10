@@ -13,16 +13,16 @@
 #include <WinDef.h>
 #include <WinNT.h>
 
-#define WM_THREAD_INFO		WM_USER + 1 // Ïß³Ì·¢³öÏûÏ¢
-#define WP_WORKING			WM_USER + 2 // ¿ªÊ¼¹¤×÷
-#define WP_FINISHED			WM_USER + 3 // Ïß³ÌÍê³É
-#define WP_STOPPED			WM_USER + 4 // Ïß³ÌÍ£Ö¹(Î´Íê³É)
-#define WP_REFRESH_TEXT		WM_USER + 5 // Ë¢ÐÂÎÄ±¾¿ò
-#define WP_PROG				WM_USER + 6 // ÎÄ¼þ½ø¶ÈÌõ
-#define WP_PROG_WHOLE		WM_USER + 7 // È«¾Ö½ø¶ÈÌõ
+#define WM_THREAD_INFO		WM_USER + 1 // ï¿½ß³Ì·ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+#define WP_WORKING			WM_USER + 2 // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+#define WP_FINISHED			WM_USER + 3 // ï¿½ß³ï¿½ï¿½ï¿½ï¿½
+#define WP_STOPPED			WM_USER + 4 // ï¿½ß³ï¿½Í£Ö¹(Î´ï¿½ï¿½ï¿½)
+#define WP_REFRESH_TEXT		WM_USER + 5 // Ë¢ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
+#define WP_PROG				WM_USER + 6 // ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define WP_PROG_WHOLE		WM_USER + 7 // È«ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define WM_CUSTOM_MSG		WM_USER + 16 // ×Ô¶¨ÒåÏûÏ¢
-#define WM_HYPEREDIT_MENU	WM_USER + 17 // HyperEdit µ¯³ö²Ëµ¥ÏûÏ¢
+#define WM_CUSTOM_MSG		WM_USER + 16 // ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+#define WM_HYPEREDIT_MENU	WM_USER + 17 // HyperEdit ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ï¢
 
 #else
 
@@ -51,13 +51,13 @@ enum ResultState
 	RESULT_ERROR
 };
 
-struct ResultData // ¼ÆËã½á¹û
+struct ResultData // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
 	ResultState enumState; // State
-	sunjwbase::tstring tstrPath; // Â·¾¶
-	uint64_t ulSize; // ´óÐ¡
-	sunjwbase::tstring tstrMDate; // ÐÞ¸ÄÈÕÆÚ
-	sunjwbase::tstring tstrVersion; // °æ±¾
+	sunjwbase::tstring tstrPath; // Â·ï¿½ï¿½
+	uint64_t ulSize; // ï¿½ï¿½Ð¡
+	sunjwbase::tstring tstrMDate; // ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½
+	sunjwbase::tstring tstrVersion; // ï¿½æ±¾
 	sunjwbase::tstring tstrMD5; // MD5
 	sunjwbase::tstring tstrSHA1; // SHA1
 	sunjwbase::tstring tstrSHA256; // SHA256
@@ -65,18 +65,19 @@ struct ResultData // ¼ÆËã½á¹û
 	sunjwbase::tstring tstrError; // Error string
 };
 
-struct ThreadData // ´«Ïò¼ÆËãÏß³ÌµÄÐÅÏ¢
+struct ThreadData // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ìµï¿½ï¿½ï¿½Ï¢
 {
 	UIBridgeBase *uiBridge;
 
-	bool threadWorking; // Ïß³ÌÊÇ·ñÔÚ¹¤×÷
-	bool stop; // Ö÷½çÃæÒªÇóÍ£Ö¹¼ÆËã
+	bool threadWorking; // ï¿½ß³ï¿½ï¿½Ç·ï¿½ï¿½Ú¹ï¿½ï¿½ï¿½
+	bool stop; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½ï¿½
+	bool pause; // pause calculation
 
-	bool uppercase; // ÊÇ·ñ´óÐ´
-	uint64_t totalSize; // ËùÓÐÎÄ¼þ´óÐ¡
+	bool uppercase; // ï¿½Ç·ï¿½ï¿½Ð´
+	uint64_t totalSize; // ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ð¡
 
-	uint32_t nFiles; // ÎÄ¼þ¸öÊý
-	TStrVector fullPaths; // ´ý¼ÆËãµÄËùÓÐÎÄ¼þÂ·¾¶
+	uint32_t nFiles; // ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
+	TStrVector fullPaths; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Â·ï¿½ï¿½
 
 	ResultList resultList;
 };

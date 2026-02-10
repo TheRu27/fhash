@@ -59,6 +59,7 @@ using namespace sunjwbase;
 - (void)clear {
     _thrdData->threadWorking = false;
     _thrdData->stop = false;
+    _thrdData->pause = false;
 
     _thrdData->uppercase = false;
     _thrdData->totalSize = 0;
@@ -71,6 +72,10 @@ using namespace sunjwbase;
 
 - (void)setStop:(bool)val {
     _thrdData->stop = val;
+}
+
+- (void)setPause:(bool)val {
+    _thrdData->pause = val;
 }
 
 - (void)setUppercase:(bool)val {

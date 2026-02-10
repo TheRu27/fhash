@@ -1,4 +1,15 @@
-### An open source files hash calculator for Windows and macOS.
+### Fork of [fHash](https://github.com/sunjw/fhash) — an open source files hash calculator
+
+This fork adds the following features to the **macOS** version:
+ * **Folder support** — select or drag & drop folders to hash all files inside. When a folder contains subfolders, the app asks whether to process recursively or top level only.
+ * **Pause / Resume** — pause and resume hash calculation at any time using the Pause button (replaces Clear during calculation).
+ * **Resizable window** — removed minimum window size constraint.
+
+> **Note:** This fork has only been tested on macOS with Apple Silicon (M-series) processors.
+
+---
+
+### Original features
  * MD5, SHA1, SHA256 and SHA512.
  * Support drag & drop.
  * Integrated with context menu in Explorer/Finder.
@@ -7,9 +18,7 @@
  * Support Dark Mode.
  * English and Simplified Chinese UI.
 
-The icon "希" is from hash in Chinese "哈希".   
-
-Project site: https://github.com/sunjw/fhash
+The icon "希" is from hash in Chinese "哈希".
 
 <a href="https://ko-fi.com/Y8Y72L3FZ"><img src="https://cdn.ko-fi.com/cdn/kofi4.png?v=2" alt="Buy Me a Coffee at ko-fi.com" height="36"></a>
 
