@@ -7,6 +7,24 @@ This fork adds the following features to the **macOS** version:
 
 > **Note:** This fork has only been tested on macOS with Apple Silicon (M-series) processors.
 
+### Build (macOS)
+
+**Requirements:** Xcode 18+ with Command Line Tools
+
+```bash
+# Clone
+git clone https://github.com/TheRu27/fhash.git
+cd fhash
+
+# Build (Apple Silicon)
+xcodebuild -workspace trunk/fHash.xcworkspace -scheme fHash -configuration Release -arch arm64 build
+
+# Run
+open ~/Library/Developer/Xcode/DerivedData/fHash-*/Build/Products/Release/fHash.app
+```
+
+To build a universal binary (Intel + Apple Silicon), replace `-arch arm64` with `-arch arm64 -arch x86_64`.
+
 ---
 
 ### Original features
