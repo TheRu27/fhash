@@ -30,11 +30,11 @@
             <objects>
                 <viewController showSeguePresentationStyle="single" id="V35-dL-6OF" customClass="AboutViewController" sceneMemberID="viewController">
                     <view key="view" id="bS0-fd-qFN">
-                        <rect key="frame" x="0.0" y="0.0" width="430" height="272"/>
+                        <rect key="frame" x="0.0" y="0.0" width="430" height="302"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <view translatesAutoresizingMaskIntoConstraints="NO" id="JLJ-Dy-ckM">
-                                <rect key="frame" x="0.0" y="0.0" width="430" height="272"/>
+                                <rect key="frame" x="0.0" y="0.0" width="430" height="302"/>
                                 <subviews>
                                     <button wantsLayer="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zGm-ZO-GT5">
                                         <rect key="frame" x="310" y="20" width="100" height="20"/>
@@ -63,9 +63,9 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sh8-E9-AAT">
-                                        <rect key="frame" x="100" y="59" width="312" height="165"/>
+                                        <rect key="frame" x="100" y="59" width="312" height="195"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="165" id="dIW-dR-K5k"/>
+                                            <constraint firstAttribute="height" constant="195" id="dIW-dR-K5k"/>
                                             <constraint firstAttribute="width" constant="308" id="iAD-3b-m5X"/>
                                         </constraints>
                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="infoTextField" id="zWw-Pv-m5p">
@@ -75,7 +75,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="l26-dk-XVG">
-                                        <rect key="frame" x="20" y="162" width="64" height="64"/>
+                                        <rect key="frame" x="20" y="192" width="64" height="64"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="64" id="bGI-jU-0iT"/>
                                             <constraint firstAttribute="height" constant="64" id="q0E-Cs-u3g"/>

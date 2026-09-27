@@ -37,12 +37,17 @@ import Cocoa
         strAboutInfo += "\n"
         strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_RIGHT")
         strAboutInfo += "\n"
+        strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_MODIFIED")
+        strAboutInfo += "\n"
         strAboutInfo += "\n"
         strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_MD5")
         strAboutInfo += "\n"
         strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_SHA256")
         strAboutInfo += "\n"
         strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_SHA512")
+        strAboutInfo += "\n"
+        strAboutInfo += "\n"
+        strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_BASEDON")
         infoTextField.stringValue = strAboutInfo
 
         // Set homepage.

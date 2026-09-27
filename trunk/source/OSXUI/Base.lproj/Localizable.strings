@@ -59,8 +59,10 @@
 "ABOUTDLG_INFO_SHA512" = "SHA512 implementation copyright (C) Aaron D. Gifford";
 "ABOUTDLG_INFO_RIGHTDETAIL" = "More details are on Project Site.";
 "ABOUTDLG_INFO_OSTITLE" = "Operating System:";
+"ABOUTDLG_INFO_MODIFIED" = "Modified by TheRu27.";
+"ABOUTDLG_INFO_BASEDON" = "Based on fhash by SUN Junwen.";
 "ABOUTDLG_PROJECT_SITE" = "<a>GitHub</a>";
-"ABOUTDLG_PROJECT_URL" = "https://github.com/sunjw/fhash";
+"ABOUTDLG_PROJECT_URL" = "https://github.com/TheRu27/fhash";
 
 // Shell ext
 "SHELL_EXT_TOO_MANY_FILES" = "Selected too many files";

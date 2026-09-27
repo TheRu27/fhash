@@ -11,7 +11,7 @@ import SwiftUI
 
 // Pure SwiftUI About view content, the same to AboutViewController.
 struct AboutSwiftUIView: View {
-    static let contentSize = NSSize(width: 430, height: 272)
+    static let contentSize = NSSize(width: 430, height: 302)
 
     let onClose: () -> Void
 
@@ -52,7 +52,7 @@ struct AboutSwiftUIView: View {
         Text(aboutInfoText)
             .font(.system(size: 13))
             .foregroundStyle(Color(nsColor: .labelColor))
-            .frame(width: 308, height: 165, alignment: .topLeading)
+            .frame(width: 308, height: 195, alignment: .topLeading)
     }
 
     @ViewBuilder
@@ -90,12 +90,17 @@ struct AboutSwiftUIView: View {
         strAboutInfo += "\n"
         strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_RIGHT")
         strAboutInfo += "\n"
+        strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_MODIFIED")
+        strAboutInfo += "\n"
         strAboutInfo += "\n"
         strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_MD5")
         strAboutInfo += "\n"
         strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_SHA256")
         strAboutInfo += "\n"
         strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_SHA512")
+        strAboutInfo += "\n"
+        strAboutInfo += "\n"
+        strAboutInfo += MacSwiftUtils.GetStringFromRes("ABOUTDLG_INFO_BASEDON")
         return strAboutInfo
     }
 
