@@ -9,15 +9,17 @@
 /* Begin PBXBuildFile section */
 		4111D69D27F16A35001AD814 /* sha512.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4111D69C27F16A35001AD814 /* sha512.cpp */; };
 		4119D65F2B2012B70005D7E5 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4119D65E2B2012B70005D7E5 /* MainViewController.swift */; };
+		411E07D12F9B63CC00435298 /* LiquidGlassUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411E07D02F9B63CC00435298 /* LiquidGlassUtils.swift */; };
 		413870E22B1F20C500448A6F /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 413870E12B1F20C500448A6F /* AboutViewController.swift */; };
 		4142A2B42E7D5A3000F43F56 /* fHashIconTahoe.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4142A2B32E7D5A3000F43F56 /* fHashIconTahoe.icon */; };
 		4142AB552E7AA0E10072FE1B /* MainScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4142AB542E7AA0E10072FE1B /* MainScrollView.swift */; };
+		4165F3B5302EF13D0047595D /* AboutSwiftUIWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4165F3B4302EF13D0047595D /* AboutSwiftUIWindowController.swift */; };
+		4165F3B7302EF2630047595D /* AboutSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4165F3B6302EF2630047595D /* AboutSwiftUIView.swift */; };
 		41666E031B67415300A1D71F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 41666E051B67415300A1D71F /* Localizable.strings */; };
 		41666E141B67573900A1D71F /* ServicesMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = 41666E161B67573900A1D71F /* ServicesMenu.strings */; };
 		417AC3D42B19C992003DFFAF /* PaddingClipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417AC3D32B19C992003DFFAF /* PaddingClipView.swift */; };
 		417AC3D62B19CDC2003DFFAF /* NoTitlebarWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417AC3D52B19CDC2003DFFAF /* NoTitlebarWindowController.swift */; };
 		417AC3D82B19D1BC003DFFAF /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417AC3D72B19D1BC003DFFAF /* MainWindowController.swift */; };
-		419287792EF442DE0079F10E /* TitlebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 419287782EF442DE0079F10E /* TitlebarView.swift */; };
 		4198A5331B58D3B50050C831 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4198A5311B58D3B50050C831 /* Assets.xcassets */; };
 		4198A5371B58D3C40050C831 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4198A5351B58D3C40050C831 /* Main.storyboard */; };
 		41AAAF372B1D92C200146768 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41AAAF362B1D92C200146768 /* AboutWindowController.swift */; };
@@ -47,11 +49,14 @@
 		4111D69B27F16A35001AD814 /* sha512.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sha512.h; path = source/Algorithms/sha512.h; sourceTree = "<group>"; };
 		4111D69C27F16A35001AD814 /* sha512.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sha512.cpp; path = source/Algorithms/sha512.cpp; sourceTree = "<group>"; };
 		4119D65E2B2012B70005D7E5 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		411E07D02F9B63CC00435298 /* LiquidGlassUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidGlassUtils.swift; sourceTree = "<group>"; };
 		413870E12B1F20C500448A6F /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		4142A2B32E7D5A3000F43F56 /* fHashIconTahoe.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = fHashIconTahoe.icon; sourceTree = "<group>"; };
 		4142AB542E7AA0E10072FE1B /* MainScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScrollView.swift; sourceTree = "<group>"; };
 		415F8D6E28CF558500D8971C /* ThreadPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ThreadPool.h; path = source/Common/ThreadPool.h; sourceTree = "<group>"; };
 		4163EC952850A2C900453333 /* stdafx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stdafx.h; path = source/OSXUI/stdafx.h; sourceTree = "<group>"; };
+		4165F3B4302EF13D0047595D /* AboutSwiftUIWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutSwiftUIWindowController.swift; sourceTree = "<group>"; };
+		4165F3B6302EF2630047595D /* AboutSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutSwiftUIView.swift; sourceTree = "<group>"; };
 		41666E041B67415300A1D71F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		41666E061B6741C900A1D71F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		41666E151B67573900A1D71F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/ServicesMenu.strings; sourceTree = "<group>"; };
@@ -61,7 +66,6 @@
 		417AC3D52B19CDC2003DFFAF /* NoTitlebarWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoTitlebarWindowController.swift; sourceTree = "<group>"; };
 		417AC3D72B19D1BC003DFFAF /* MainWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		418F62861BE9C8D6007337CF /* fHash.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = fHash.entitlements; path = source/OSXUI/fHash.entitlements; sourceTree = SOURCE_ROOT; };
-		419287782EF442DE0079F10E /* TitlebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitlebarView.swift; sourceTree = "<group>"; };
 		4198A5311B58D3B50050C831 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = source/OSXUI/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		4198A5321B58D3B50050C831 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = source/OSXUI/Info.plist; sourceTree = SOURCE_ROOT; };
 		4198A5361B58D3C40050C831 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = source/OSXUI/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
@@ -90,7 +94,7 @@
 		41FF1DF01B5B4B470081F283 /* sha256.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sha256.cpp; path = source/Algorithms/sha256.cpp; sourceTree = "<group>"; };
 		41FF1DF11B5B4B470081F283 /* sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sha256.h; path = source/Algorithms/sha256.h; sourceTree = "<group>"; };
 		52225800213CD69A00012EF8 /* Global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Global.h; path = source/Common/Global.h; sourceTree = "<group>"; };
-		52225802213CD95D00012EF8 /* strhelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = strhelper.cpp; path = source/Common/strhelper.cpp; sourceTree = "<group>"; };
+		52225802213CD95D00012EF8 /* strhelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = strhelper.cpp; path = source/Common/strhelper.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		52225803213CD95D00012EF8 /* strhelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = strhelper.h; path = source/Common/strhelper.h; sourceTree = "<group>"; };
 		52225808213CDA7C00012EF8 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Utils.cpp; path = source/Common/Utils.cpp; sourceTree = "<group>"; };
 		52225809213CDA7C00012EF8 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = source/Common/Utils.h; sourceTree = "<group>"; };
@@ -186,12 +190,15 @@
 				4142A2B32E7D5A3000F43F56 /* fHashIconTahoe.icon */,
 				417AC3D02B197FF5003DFFAF /* fHash-Bridging-Header.h */,
 				41B6B5572D01975800697E22 /* fHash-Swift-Header.h */,
+				4165F3B6302EF2630047595D /* AboutSwiftUIView.swift */,
+				4165F3B4302EF13D0047595D /* AboutSwiftUIWindowController.swift */,
 				413870E12B1F20C500448A6F /* AboutViewController.swift */,
 				41AAAF362B1D92C200146768 /* AboutWindowController.swift */,
 				41B6B5532D017DAB00697E22 /* DockProgress.swift */,
 				41B6B5542D017DAB00697E22 /* DockProgressUtilities.swift */,
 				41B45DFC2B26A2DB00846043 /* fHashMacAppDelegate.swift */,
 				41AAAF3A2B1DBB5D00146768 /* HyperlinkTextField.swift */,
+				411E07D02F9B63CC00435298 /* LiquidGlassUtils.swift */,
 				5222581A213CF24300012EF8 /* MacUtils.h */,
 				52225819213CF24300012EF8 /* MacUtils.mm */,
 				41AAAF382B1D931A00146768 /* MacSwiftUtils.swift */,
@@ -202,7 +209,6 @@
 				417AC3D52B19CDC2003DFFAF /* NoTitlebarWindowController.swift */,
 				417AC3D32B19C992003DFFAF /* PaddingClipView.swift */,
 				41C4BB072B2169AB004A6C34 /* ResultDataSwift.swift */,
-				419287782EF442DE0079F10E /* TitlebarView.swift */,
 				41C4BB092B21B05F004A6C34 /* HashBridge.h */,
 				41C4BB0A2B21B090004A6C34 /* HashBridge.mm */,
 				41C4BB042B215BC5004A6C34 /* UIBridgeMacSwift.h */,
@@ -304,6 +310,7 @@
 			files = (
 				52225810213CDB2900012EF8 /* HashEngine.cpp in Sources */,
 				41B45DFD2B26A2DB00846043 /* fHashMacAppDelegate.swift in Sources */,
+				4165F3B7302EF2630047595D /* AboutSwiftUIView.swift in Sources */,
 				41B45DFB2B269F9500846043 /* MainView.swift in Sources */,
 				417AC3D82B19D1BC003DFFAF /* MainWindowController.swift in Sources */,
 				41C4BB082B2169AB004A6C34 /* ResultDataSwift.swift in Sources */,
@@ -314,9 +321,10 @@
 				413870E22B1F20C500448A6F /* AboutViewController.swift in Sources */,
 				52225804213CD95E00012EF8 /* strhelper.cpp in Sources */,
 				41FF1DF51B5B4B470081F283 /* sha256.cpp in Sources */,
+				411E07D12F9B63CC00435298 /* LiquidGlassUtils.swift in Sources */,
 				41B6B5552D017DAB00697E22 /* DockProgress.swift in Sources */,
 				41B6B5562D017DAB00697E22 /* DockProgressUtilities.swift in Sources */,
-				419287792EF442DE0079F10E /* TitlebarView.swift in Sources */,
+				4165F3B5302EF13D0047595D /* AboutSwiftUIWindowController.swift in Sources */,
 				5222581B213CF24300012EF8 /* MacUtils.mm in Sources */,
 				417AC3D42B19C992003DFFAF /* PaddingClipView.swift in Sources */,
 				4142AB552E7AA0E10072FE1B /* MainScrollView.swift in Sources */,
@@ -420,7 +428,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -487,7 +495,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -527,7 +535,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-liconv";
 				PRODUCT_BUNDLE_IDENTIFIER = org.sunjw.fHashMacUI;
@@ -570,7 +578,7 @@
 					"@executable_path/../Frameworks",
 				);
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-liconv";
 				PRODUCT_BUNDLE_IDENTIFIER = org.sunjw.fHashMacUI;

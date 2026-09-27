@@ -8,6 +8,7 @@
 
 import Darwin.C
 import Foundation
+import AppKit
 
 class MacSwiftUtils {
 
@@ -164,5 +165,18 @@ class MacSwiftUtils {
 
         // Otherwise search descendants
         return FindFirstDescendantViewFrom(from, withClassName: name)
+    }
+
+    @MainActor class func CenterWindowOnScreen(_ window: NSWindow?) {
+        guard let window, let screen = window.screen ?? NSScreen.main else {
+            return
+        }
+        let visibleFrame = screen.visibleFrame
+        let frame = window.frame
+        let centerOrigin = NSPoint(
+            x: visibleFrame.midX - frame.width / 2,
+            y: visibleFrame.midY - frame.height / 2
+        )
+        window.setFrameOrigin(centerOrigin)
     }
 }

@@ -12,6 +12,8 @@ import Cocoa
 @objc(fHashMacAppDelegate) class fHashMacAppDelegate: NSObject, NSApplicationDelegate {
     weak var mainViewController: MainViewController?
 
+    private var aboutWindowController: AboutWindowController?
+
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
 
@@ -61,5 +63,19 @@ import Cocoa
     @IBAction func openDocument(_ sender: Any) {
         // Menu bar "open"
         mainViewController?.openFiles()
+    }
+
+    @IBAction func showAboutWindow(_ sender: Any) {
+        if MacSwiftUtils.IsSystemEarlierThan(26, 0) {
+            if aboutWindowController == nil {
+                let storyboard = NSStoryboard(name: "Main", bundle: nil)
+                aboutWindowController = storyboard.instantiateController(withIdentifier: "AboutWindowController") as? AboutWindowController
+            }
+            aboutWindowController?.showWindow(sender)
+            aboutWindowController?.window?.makeKeyAndOrderFront(sender)
+        } else {
+            AboutSwiftUIWindowController.shared.showWindow(sender)
+            AboutSwiftUIWindowController.shared.window?.makeKeyAndOrderFront(sender)
+        }
     }
 }

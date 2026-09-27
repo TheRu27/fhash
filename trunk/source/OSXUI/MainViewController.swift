@@ -22,16 +22,21 @@ private struct MainViewControllerState: OptionSet {
     static let WAITING_EXIT = MainViewControllerState(rawValue: 1 << 5) // waiting thread stop and exit
 }
 
-@objc(MainViewController) class MainViewController: NSViewController, NSTextViewDelegate {
+@objc(MainViewController) class MainViewController: NSViewController, NSTextViewDelegate, NSSearchFieldDelegate {
     static let MainClipViewInsetAfter26 = NSEdgeInsets(top: 28, left: 0, bottom: 0, right: 0)
-    static let MainClipViewInsetWithFindBarAtAboveAfter26 = NSEdgeInsets(top: 34, left: 0, bottom: 0, right: 0)
+    static let MainClipViewInsetLargeRoundedAfter26 = NSEdgeInsets(top: 50, left: 0, bottom: 0, right: 0)
+    // static let MainClipViewInsetWithFindBarAtAboveAfter26 = NSEdgeInsets(top: 34, left: 0, bottom: 0, right: 0)
     static let MainClipViewInsetWithFindBarAtBelowAfter26 = NSEdgeInsets(top: 28, left: 0, bottom: 26, right: 0)
+    static let MainClipViewInsetWithFindBarAtBelowLargeRoundedAfter26 = NSEdgeInsets(top: 50, left: 0, bottom: 26, right: 0)
     static let MainTextViewInsetAfter26 = NSMakeSize(3.0, 2.0)
-    static let MainScrollViewTopConstraintAfter26: CGFloat = 26
+    static let MainTextViewInsetLargeRoundedAfter26 = NSMakeSize(10.0, 2.0)
+    // static let MainScrollViewTopConstraintAfter26: CGFloat = 26
+    static let MainScrollViewBottomConstraint: CGFloat = 45
 
     @IBOutlet weak var mainScrollView: MainScrollView!
     @IBOutlet weak var mainScrollViewTopConstraint: NSLayoutConstraint!
-
+    @IBOutlet weak var mainScrollViewBottomConstraint: NSLayoutConstraint!
+    
     @IBOutlet weak var mainClipView: PaddingClipView!
 
     @IBOutlet weak var mainTextView: NSTextView!
@@ -39,17 +44,25 @@ private struct MainViewControllerState: OptionSet {
     @IBOutlet weak var mainProgressIndicator: NSProgressIndicator!
 
     @IBOutlet weak var openButton: NSButton!
+    @IBOutlet weak var openButtonBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var clearButton: NSButton!
+    @IBOutlet weak var clearButtonBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var verifyButton: NSButton!
+    @IBOutlet weak var verifyButtonBottomConstraint: NSLayoutConstraint!
 
     @IBOutlet weak var upperCaseButton: NSButton!
+    @IBOutlet weak var upperCaseButtonLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var upperCaseButtonBottomConstraint: NSLayoutConstraint!
 
     @IBOutlet weak var speedTextField: NSTextField!
+    @IBOutlet weak var speedTextFieldBottomConstraint: NSLayoutConstraint!
 
     @objc var tag: Int = 0 // Must have @ojbc, it is used to open finder bar.
 
     private var mainText: NSMutableAttributedString?
     private var nsAttrStrNoPreparing: NSAttributedString?
+
+    private var trafficLightGlassPillView: TrafficLightGlassPillView?
 
     private var state: MainViewControllerState = .NONE
 
@@ -88,6 +101,32 @@ private struct MainViewControllerState: OptionSet {
 
         // Setup NSVisualEffectView/NSGlassEffectView background.
         _ = MacSwiftUtils.SetupEffectViewBackground(mainView)
+
+        if LiquidGlassUI.enableTrafficLightGlass() {
+            // Setup NSGlassEffectView for traffic light.
+            let glassPillView = TrafficLightGlassPillView()
+            glassPillView.setupTrafficLightPill(mainView)
+            trafficLightGlassPillView = glassPillView
+        }
+
+        if LiquidGlassUI.enableLargeRounded() {
+            // Large rounded ui
+            let titlebarOverlayView = TitlebarOverlayView()
+            titlebarOverlayView.setupTitlebarOverlay(mainView)
+        } else {
+            // Old style
+            mainScrollViewBottomConstraint.constant = MainViewController.MainScrollViewBottomConstraint
+            openButton.controlSize = .regular
+            openButtonBottomConstraint.constant = 12
+            clearButton.controlSize = .regular
+            clearButtonBottomConstraint.constant = 12
+            verifyButton.controlSize = .regular
+            verifyButtonBottomConstraint.constant = 12
+            upperCaseButton.controlSize = .regular
+            upperCaseButtonLeadingConstraint.constant = 10
+            upperCaseButtonBottomConstraint.constant = 15
+            speedTextFieldBottomConstraint.constant = 14
+        }
 
         // Register NSUserDefaults.
         let defaultsDictionary = [
@@ -129,22 +168,30 @@ private struct MainViewControllerState: OptionSet {
             if FindBarAtBelowAfter26 {
                 mainScrollView.findBarPosition = .belowContent
             } else {
-                mainScrollView.findBarPosition = .aboveContent
+                // mainScrollView.findBarPosition = .aboveContent
             }
         }
 
         // Set clip view insets.
         if (!MacSwiftUtils.IsSystemEarlierThan(26, 0)) {
             mainClipView.automaticallyAdjustsContentInsets = false
-            mainClipView.contentInsets = MainViewController.MainClipViewInsetAfter26
+            if LiquidGlassUI.enableLargeRounded() {
+                mainClipView.contentInsets = MainViewController.MainClipViewInsetLargeRoundedAfter26
+            } else {
+                mainClipView.contentInsets = MainViewController.MainClipViewInsetAfter26
+            }
         }
 
-        // Set some text in text field.
+        // Set text view insets.
         mainTextView.delegate = self
-        if (MacSwiftUtils.IsSystemEarlierThan(26, 0)) {
+        if MacSwiftUtils.IsSystemEarlierThan(26, 0) {
             mainTextView.textContainerInset = NSMakeSize(3.0, 2.0)
         } else {
-            mainTextView.textContainerInset = MainViewController.MainTextViewInsetAfter26
+            if LiquidGlassUI.enableLargeRounded() {
+                mainTextView.textContainerInset = MainViewController.MainTextViewInsetLargeRoundedAfter26
+            } else {
+                mainTextView.textContainerInset = MainViewController.MainTextViewInsetAfter26
+            }
         }
 
         mainFont = .monospacedSystemFont(ofSize: 12, weight: .regular)
@@ -189,6 +236,19 @@ private struct MainViewControllerState: OptionSet {
 
         // Update main text.
         self.updateMainTextView()
+
+        if LiquidGlassUI.enableFakeSoftEdge() || LiquidGlassUI.enableTrafficLightGlass() {
+            // Subscribe mainClipView bounds change (scrolled).
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleMainScrollViewScrolled),
+                name: NSView.boundsDidChangeNotification,
+                object: mainClipView)
+        }
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     override func viewWillDisappear() {
@@ -306,7 +366,6 @@ private struct MainViewControllerState: OptionSet {
 
     func openFiles() {
         let openPanel = NSOpenPanel()
-        openPanel.showsResizeIndicator = true
         openPanel.showsHiddenFiles = false
         openPanel.canChooseDirectories = true
         openPanel.canCreateDirectories = true
@@ -447,6 +506,15 @@ private struct MainViewControllerState: OptionSet {
             value: NSColor.textColor,
             range: NSRange(location: 0, length: mainText!.length))
 
+        if LiquidGlassUI.enableLargeRounded() {
+            let paraStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
+            paraStyle.lineSpacing = 3
+            mainText?.addAttribute(
+                .paragraphStyle,
+                value: paraStyle,
+                range: NSRange(location: 0, length: mainText!.length))
+        }
+
         // word wrap
         // var paraStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
         // paraStyle.lineBreakMode = .byCharWrapping
@@ -459,32 +527,32 @@ private struct MainViewControllerState: OptionSet {
 
         mainTextView.textStorage?.setAttributedString(mainText!)
 
-        if (!MacSwiftUtils.IsSystemEarlierThan(14, 0) &&
-            MacSwiftUtils.IsSystemEarlierThan(15, 3)) {
-            // Sonoma and later insets fix.
-            let fixInset = 5.0
-            let mainTextSize = mainText!.size()
-            let mainScrollViewSize = mainScrollView.frame.size
-            var scrollViewContentInsets = mainScrollView.contentInsets
-            var scrollViewScrollerInsets: NSEdgeInsets?
-            if mainTextSize.width > mainScrollViewSize.width {
-                // Add inset.
-                scrollViewContentInsets.left = fixInset
-                scrollViewContentInsets.right = fixInset
-                scrollViewScrollerInsets = mainScrollView.scrollerInsets
-                scrollViewScrollerInsets?.left = -(fixInset)
-                scrollViewScrollerInsets?.right = -(fixInset)
-            } else {
-                // Reset inset.
-                scrollViewContentInsets.left = 0
-                scrollViewContentInsets.right = 0
-                scrollViewScrollerInsets = mainScrollView.scrollerInsets
-                scrollViewScrollerInsets?.left = 0
-                scrollViewScrollerInsets?.right = 0
-            }
-            mainScrollView.contentInsets = scrollViewContentInsets
-            mainScrollView.scrollerInsets = scrollViewScrollerInsets!
-        }
+        // if (!MacSwiftUtils.IsSystemEarlierThan(14, 0) &&
+        //     MacSwiftUtils.IsSystemEarlierThan(15, 3)) {
+        //     // Sonoma and later insets fix.
+        //     let fixInset = 5.0
+        //     let mainTextSize = mainText!.size()
+        //     let mainScrollViewSize = mainScrollView.frame.size
+        //     var scrollViewContentInsets = mainScrollView.contentInsets
+        //     var scrollViewScrollerInsets: NSEdgeInsets?
+        //     if mainTextSize.width > mainScrollViewSize.width {
+        //         // Add inset.
+        //         scrollViewContentInsets.left = fixInset
+        //         scrollViewContentInsets.right = fixInset
+        //         scrollViewScrollerInsets = mainScrollView.scrollerInsets
+        //         scrollViewScrollerInsets?.left = -(fixInset)
+        //         scrollViewScrollerInsets?.right = -(fixInset)
+        //     } else {
+        //         // Reset inset.
+        //         scrollViewContentInsets.left = 0
+        //         scrollViewContentInsets.right = 0
+        //         scrollViewScrollerInsets = mainScrollView.scrollerInsets
+        //         scrollViewScrollerInsets?.left = 0
+        //         scrollViewScrollerInsets?.right = 0
+        //     }
+        //     mainScrollView.contentInsets = scrollViewContentInsets
+        //     mainScrollView.scrollerInsets = scrollViewScrollerInsets!
+        // }
 
         if !keepScrollPosition {
             // Scroll to end.
@@ -518,21 +586,29 @@ private struct MainViewControllerState: OptionSet {
         if FindBarAtBelowAfter26 {
             if isVisible {
                 // show
-                mainClipView.contentInsets = MainViewController.MainClipViewInsetWithFindBarAtBelowAfter26
+                if LiquidGlassUI.enableLargeRounded() {
+                    mainClipView.contentInsets = MainViewController.MainClipViewInsetWithFindBarAtBelowLargeRoundedAfter26
+                } else {
+                    mainClipView.contentInsets = MainViewController.MainClipViewInsetWithFindBarAtBelowAfter26
+                }
             } else {
                 // hide
-                mainClipView.contentInsets = MainViewController.MainClipViewInsetAfter26
+                if LiquidGlassUI.enableLargeRounded() {
+                    mainClipView.contentInsets = MainViewController.MainClipViewInsetLargeRoundedAfter26
+                } else {
+                    mainClipView.contentInsets = MainViewController.MainClipViewInsetAfter26
+                }
             }
         } else {
-            if isVisible {
-                // show
-                mainScrollViewTopConstraint.constant = MainViewController.MainScrollViewTopConstraintAfter26
-                mainClipView.contentInsets = MainViewController.MainClipViewInsetWithFindBarAtAboveAfter26
-            } else {
-                // hide
-                mainScrollViewTopConstraint.constant = 0
-                mainClipView.contentInsets = MainViewController.MainClipViewInsetAfter26
-            }
+            // if isVisible {
+            //     // show
+            //     mainScrollViewTopConstraint.constant = MainViewController.MainScrollViewTopConstraintAfter26
+            //     mainClipView.contentInsets = MainViewController.MainClipViewInsetWithFindBarAtAboveAfter26
+            // } else {
+            //     // hide
+            //     mainScrollViewTopConstraint.constant = 0
+            //     mainClipView.contentInsets = MainViewController.MainClipViewInsetAfter26
+            // }
         }
 
         // if let enclosingScrollView = mainTextView.enclosingScrollView {
@@ -547,55 +623,55 @@ private struct MainViewControllerState: OptionSet {
             return
         }
 
-        var scrollNeedFix = true
-        var becameShow = true
+        // var scrollNeedFix = true
+        // var becameShow = true
 
-        let newFindPanelVisible = mainScrollView.isFindBarVisible
-        if newFindPanelVisible == curFindPanelVisible {
-            scrollNeedFix = false
-        }
-        if newFindPanelVisible && !curFindPanelVisible {
-            // show find bar
-            // NSLog("clipViewSizeChange, show find bar")
-        }
-        if !newFindPanelVisible && curFindPanelVisible {
-            // hide find bar
-            // NSLog("clipViewSizeChange, hide find bar")
-            becameShow = false
-        }
+        // let newFindPanelVisible = mainScrollView.isFindBarVisible
+        // if newFindPanelVisible == curFindPanelVisible {
+        //     scrollNeedFix = false
+        // }
+        // if newFindPanelVisible && !curFindPanelVisible {
+        //     // show find bar
+        //     // NSLog("clipViewSizeChange, show find bar")
+        // }
+        // if !newFindPanelVisible && curFindPanelVisible {
+        //     // hide find bar
+        //     // NSLog("clipViewSizeChange, hide find bar")
+        //     becameShow = false
+        // }
 
-        let mainTextSize = mainText!.size()
-        let mainScrollViewSize = mainScrollView.frame.size
-        // NSLog("clipViewSizeChange, mainTextSize.height=%.2f, mainScrollViewSize.height=%.2f",
-        //       mainTextSize.height, mainScrollViewSize.height)
-        if mainTextSize.height < mainScrollViewSize.height {
-            scrollNeedFix = false
-        }
+        // let mainTextSize = mainText!.size()
+        // let mainScrollViewSize = mainScrollView.frame.size
+        // // NSLog("clipViewSizeChange, mainTextSize.height=%.2f, mainScrollViewSize.height=%.2f",
+        // //       mainTextSize.height, mainScrollViewSize.height)
+        // if mainTextSize.height < mainScrollViewSize.height {
+        //     scrollNeedFix = false
+        // }
 
-        if scrollNeedFix, let enclosingScrollView = self.mainTextView.enclosingScrollView {
-            // NSLog("clipViewSizeChange, y=%.2f", enclosingScrollView.contentView.bounds.origin.y)
-            var scrollFix: CGFloat = 0
-            let bottomOffset = mainTextSize.height - mainScrollViewSize.height - enclosingScrollView.contentView.bounds.origin.y
-            if becameShow && enclosingScrollView.contentView.bounds.origin.y < -18 {
-                // NSLog("clipViewSizeChange, fix show top")
-                scrollFix = -6
-            }
-            // NSLog("clipViewSizeChange, bottomOffset=%.2f", bottomOffset)
-            if becameShow && bottomOffset <= MainViewController.MainScrollViewTopConstraintAfter26 {
-                // NSLog("clipViewSizeChange, fix show bottom")
-                scrollFix = MainViewController.MainScrollViewTopConstraintAfter26
-            }
+        // if scrollNeedFix, let enclosingScrollView = self.mainTextView.enclosingScrollView {
+        //     // NSLog("clipViewSizeChange, y=%.2f", enclosingScrollView.contentView.bounds.origin.y)
+        //     var scrollFix: CGFloat = 0
+        //     let bottomOffset = mainTextSize.height - mainScrollViewSize.height - enclosingScrollView.contentView.bounds.origin.y
+        //     if becameShow && enclosingScrollView.contentView.bounds.origin.y < -18 {
+        //         // NSLog("clipViewSizeChange, fix show top")
+        //         scrollFix = -6
+        //     }
+        //     // NSLog("clipViewSizeChange, bottomOffset=%.2f", bottomOffset)
+        //     if becameShow && bottomOffset <= MainViewController.MainScrollViewTopConstraintAfter26 {
+        //         // NSLog("clipViewSizeChange, fix show bottom")
+        //         scrollFix = MainViewController.MainScrollViewTopConstraintAfter26
+        //     }
 
-            if scrollFix != 0 {
-                enclosingScrollView.contentView.scroll(to:NSPoint(
-                    x: enclosingScrollView.contentView.bounds.origin.x,
-                    y: enclosingScrollView.contentView.bounds.origin.y + scrollFix))
-                enclosingScrollView.reflectScrolledClipView(enclosingScrollView.contentView)
-            }
-            // NSLog("clipViewSizeChange, after, y=%.2f", enclosingScrollView.contentView.bounds.origin.y)
-        }
+        //     if scrollFix != 0 {
+        //         enclosingScrollView.contentView.scroll(to:NSPoint(
+        //             x: enclosingScrollView.contentView.bounds.origin.x,
+        //             y: enclosingScrollView.contentView.bounds.origin.y + scrollFix))
+        //         enclosingScrollView.reflectScrolledClipView(enclosingScrollView.contentView)
+        //     }
+        //     // NSLog("clipViewSizeChange, after, y=%.2f", enclosingScrollView.contentView.bounds.origin.y)
+        // }
 
-        curFindPanelVisible = newFindPanelVisible
+        // curFindPanelVisible = newFindPanelVisible
     }
 
     private func calculateFinished() {
@@ -713,7 +789,12 @@ private struct MainViewControllerState: OptionSet {
         strAppend += " "
         strAppend += result.strPath
         strAppend += "\n"
+        let oldLength = nsmutAttrString.length
         MacSwiftUtils.AppendStringToNSMutableAttributedString(nsmutAttrString, strAppend)
+        nsmutAttrString.addAttribute(.toolTip,
+                                     value: result.strPath,
+                                     range: NSRange(location: oldLength,
+                                                    length: (nsmutAttrString.length - oldLength)))
     }
 
     private func appendFileMetaToNSMutableAttributedString(_ result: ResultDataSwift,
@@ -1015,5 +1096,61 @@ private struct MainViewControllerState: OptionSet {
         let nstrUrl = "https://www.virustotal.com/gui/search/\(selectedLink)"
         let url = URL(string: nstrUrl)!
         NSWorkspace.shared.open(url)
+    }
+
+    func controlTextDidChange(_ obj: Notification) {
+        guard let findTextField = obj.object as? NSTextField else { return }
+
+        let findString = findTextField.stringValue
+        // NSLog("findTextField.stringValue [%@]", findString)
+
+        // First, trim
+        var fixedFindString = findString.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Second, regex
+        let pattern = "^(?:MD5|SHA(?:-?(?:1|256|512)))[\\s:=]+(.+)$"
+        if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
+            let nsFixedString = fixedFindString as NSString
+            let range = NSRange(location: 0, length: nsFixedString.length)
+            if let match = regex.firstMatch(in: fixedFindString, options: [], range: range),
+               match.numberOfRanges >= 2 {
+                let hashRange = match.range(at: 1)
+                fixedFindString = nsFixedString.substring(with: hashRange)
+            }
+        }
+
+        if (fixedFindString.isEmpty || fixedFindString == findString) {
+            return // no change
+        }
+        findTextField.stringValue = fixedFindString
+        // NSLog("findTextField.stringValue fixedFindString=[%@]", fixedFindString)
+    }
+
+    func control(
+        _ control: NSControl,
+        textView: NSTextView,
+        doCommandBy commandSelector: Selector
+    ) -> Bool {
+        if commandSelector == #selector(NSResponder.insertNewline(_:)) ||
+            commandSelector == #selector(NSResponder.insertNewlineIgnoringFieldEditor(_:)) {
+            tag = NSTextFinder.Action.nextMatch.rawValue
+            mainTextView.performTextFinderAction(self)
+            return true
+        }
+
+        return false
+    }
+
+    @objc private func handleMainScrollViewScrolled() {
+        // mainClipView.bounds.origin.y = -50 is not scrolled.
+        if LiquidGlassUI.enableFakeSoftEdge() {
+            mainScrollView.updateScrollTopEdgeViewVisible()
+        }
+
+        if LiquidGlassUI.enableTrafficLightGlass() {
+            guard let glassPillView = trafficLightGlassPillView else { return }
+            let scrolled = mainClipView.bounds.origin.y > -42
+            glassPillView.setVisible(scrolled, animated: true)
+        }
     }
 }

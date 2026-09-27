@@ -46,9 +46,15 @@ The icon "希" is from hash in Chinese "哈希".
 | Windows 10 and later (Store) | [![Image of Microsoft Store](https://raw.githubusercontent.com/sunjw/fhash/master/assets/Microsoft_English_L.png)](https://www.microsoft.com/store/apps/9P4CLCRV93DQ) |
 | macOS | [![Image of GitHub](https://raw.githubusercontent.com/sunjw/fhash/master/assets/GitHub_Logo_White.png)](https://github.com/sunjw/fhash/releases/latest) |
 
-#### winget
+#### WinGet
 ```
 winget install fHash
+```
+
+#### Homebrew
+```
+brew tap sunjw/tap
+brew install --cask fhash
 ```
 
 ### LICENSE

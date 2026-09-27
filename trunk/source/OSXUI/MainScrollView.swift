@@ -9,23 +9,37 @@
 import Cocoa
 
 @objc(MainScrollView) class MainScrollView: NSScrollView {
-    static let TitlebarViewHeight = 32
-
     weak var mainViewController: MainViewController?
-    private var titlebarView: TitlebarView?
+    private var scrollTopEdgeView: ScrollTopEdgeGaussianBlurView?
 
     override func addSubview(_ view: NSView) {
+        let viewClassName = String(describing: type(of: view))
+        // NSLog("MainScrollView.addSubview [%@]", viewClassName)
+
         if (!MacSwiftUtils.IsSystemEarlierThan(26, 0)) {
             // NSScrollPocket may be added multiple times
-            let targetViewNames = ["Dummy", /*"NSScrollPocket"*/]
-            let viewClassName = String(describing: type(of: view))
-            // NSLog("MainScrollView.addSubview [%@]", viewClassName)
-            if targetViewNames.contains(viewClassName) {
-                DispatchQueue.main.async(execute: { [view] in
-                    self.setupTitlebarView(view)
-                })
+            if LiquidGlassUI.enableFakeSoftEdge() {
+                let targetViewNames = ["NSScrollPocket"]
+                if targetViewNames.contains(viewClassName) {
+                    DispatchQueue.main.async(execute: { [view] in
+                        //self.setupScrollTopEdgeView(targetView: view, height: Int(view.frame.height))
+                        self.setupScrollTopEdgeView(targetView: view, height: 66)
+                    })
+                }
             }
         }
+
+        // Try to intercept FindBar
+        let targetViewNames = ["NSTextFinderBarView"]
+        if targetViewNames.contains(viewClassName) {
+            let findPatternSearchField = MacSwiftUtils.FindFirstViewFrom(view,
+                                                                        withClassName: "NSFindPatternSearchField")
+            if let findPatternSearchField,
+               let findTextField = findPatternSearchField as? NSSearchField {
+                findTextField.delegate = mainViewController
+            }
+        }
+
         super.addSubview(view)
     }
 
@@ -40,25 +54,36 @@ import Cocoa
         }
     }
 
-    private func setupTitlebarView(_ targetView: NSView) {
-        if titlebarView == nil {
-            titlebarView = TitlebarView(frame: CGRect(x: 0,
-                                                      y: 0,
-                                                      width: Int(bounds.width),
-                                                      height: MainScrollView.TitlebarViewHeight))
-            titlebarView?.autoresizingMask = [.width]
+    private func setupScrollTopEdgeView(targetView: NSView, height: Int) {
+        if scrollTopEdgeView == nil {
+            scrollTopEdgeView = ScrollTopEdgeGaussianBlurView(
+                frame: CGRect(x: 0, y: 0,
+                              width: Int(bounds.width),
+                              height: height))
+            scrollTopEdgeView?.autoresizingMask = [.width]
         }
 
-        guard let titlebarView else { return }
+        guard let scrollTopEdgeView else { return }
 
-        titlebarView.removeFromSuperview()
-        self.addSubview(titlebarView, positioned: .below, relativeTo: targetView)
+        scrollTopEdgeView.removeFromSuperview()
+        self.addSubview(scrollTopEdgeView, positioned: .below, relativeTo: targetView)
 
         NSLayoutConstraint.activate([
-            titlebarView.topAnchor.constraint(equalTo: topAnchor, constant: 0),
-            titlebarView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            titlebarView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            titlebarView.heightAnchor.constraint(equalToConstant: CGFloat(MainScrollView.TitlebarViewHeight))
+            scrollTopEdgeView.topAnchor.constraint(equalTo: topAnchor, constant: 0),
+            scrollTopEdgeView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollTopEdgeView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            scrollTopEdgeView.heightAnchor.constraint(equalToConstant: CGFloat(height))
         ])
+
+        self.updateScrollTopEdgeViewVisible()
+    }
+
+    func updateScrollTopEdgeViewVisible() {
+        guard let scrollTopEdgeView, let mainViewController else { return }
+        // mainClipView.bounds.origin.y = -50 is not scrolled.
+        let scrolled = mainViewController.mainClipView.bounds.origin.y > -48
+        let newAlpha: CGFloat = scrolled ? 1.0 : 0.0
+        //NSLog("updateScrollTopEdgeViewVisible, newAlpha=%.1f", newAlpha)
+        scrollTopEdgeView.alphaValue = newAlpha
     }
 }
